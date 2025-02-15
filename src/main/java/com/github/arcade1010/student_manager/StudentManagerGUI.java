@@ -1,20 +1,41 @@
 package com.github.arcade1010.student_manager;
 
+import com.github.arcade1010.student_manager.student.Student;
+import com.github.arcade1010.student_manager.student.StudentController;
+import com.github.arcade1010.student_manager.student.StudentService;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ConfigurableApplicationContext;
+
+import java.util.List;
 
 public class StudentManagerGUI extends Application {
     //start is invoked
     public static void main(String[] args){launch();}
 
+    //Start spring boot api
+    private ConfigurableApplicationContext springContext;
+    @Override
+    public void init(){
+        springContext = SpringApplication.run(StudentManagerApplication.class);
+    }
+
+    //Stop spring api
+    @Override
+    public void stop(){
+        springContext.close();
+    }
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Student Manager");
 
+        //Basic layout
         Label l1 = new Label("What would you like to do?");
         Button viewButton = new Button("View students");
         Button addButton = new Button("Add a student");
@@ -32,7 +53,7 @@ public class StudentManagerGUI extends Application {
 
 
         //View students
-
+        viewButton.setOnAction(event -> resultLabel.setText("Students: " + getAllStudents() ));
 
 
         //Add student
@@ -46,5 +67,19 @@ public class StudentManagerGUI extends Application {
 
         //Update student
 
+    }
+
+    //getAllStudents
+    public String getAllStudents(){
+        //get StudentController bean from spring (springContext)
+        StudentController sc = springContext.getBean(StudentController.class);
+        List<Student> studentsList = sc.getStudents();
+
+        //Convert List to String
+        StringBuilder students = new StringBuilder();
+        for(Student s : studentsList){
+            students.append(s.getName()).append(", ");
+        }
+        return students.toString();
     }
 }
