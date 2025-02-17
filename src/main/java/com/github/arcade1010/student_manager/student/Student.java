@@ -22,7 +22,6 @@ public class Student {
     private String name;
     private String email;
     private LocalDate dob;
-    private String testVar; //testing testvar
 
     @Transient
     private Integer age;

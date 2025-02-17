@@ -57,7 +57,7 @@ public class StudentManagerGUI extends Application {
 
 
         //Add student
-
+        addButton.setOnAction(event -> resultLabel.setText(addStudent()));
 
 
         //Remove student
@@ -81,5 +81,14 @@ public class StudentManagerGUI extends Application {
             students.append(s.getName()).append(", ");
         }
         return students.toString();
+    }
+
+    //addStudent
+    //Currently database does not persist between runs. (only students in config appear at launch)
+    public String addStudent(){
+        NewStudentForm newStudentForm = new NewStudentForm();
+        StudentController sc = springContext.getBean(StudentController.class);
+        sc.registerNewStudent(newStudentForm.display());
+        return "Student was added successfully.";
     }
 }
