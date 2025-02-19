@@ -61,7 +61,7 @@ public class StudentManagerGUI extends Application {
 
 
         //Remove student
-
+        removeButton.setOnAction(event -> resultLabel.setText(removeStudent()));
 
 
 
@@ -90,5 +90,15 @@ public class StudentManagerGUI extends Application {
         StudentController sc = springContext.getBean(StudentController.class);
         sc.registerNewStudent(newStudentForm.display());
         return "Student was added successfully.";
+    }
+
+    //removeStudent
+    //Removing a student doesn't reset the idSequenceGenerator in Student (removing id 1 doesn't mean that a student added
+    //in the future will have 1.)
+    public String removeStudent(){
+        RemoveStudentForm removeStudentForm = new RemoveStudentForm();
+        StudentController sc = springContext.getBean(StudentController.class);
+        sc.deleteStudent(removeStudentForm.display());
+        return "Removed Student";
     }
 }
