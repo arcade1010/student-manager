@@ -2,7 +2,6 @@ package com.github.arcade1010.student_manager;
 
 import com.github.arcade1010.student_manager.student.Student;
 import com.github.arcade1010.student_manager.student.StudentController;
-import com.github.arcade1010.student_manager.student.StudentService;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
@@ -13,6 +12,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.List;
+import java.util.Map;
 
 public class StudentManagerGUI extends Application {
     //start is invoked
@@ -55,17 +55,14 @@ public class StudentManagerGUI extends Application {
         //View students
         viewButton.setOnAction(event -> resultLabel.setText("Students: " + getAllStudents() ));
 
-
         //Add student
         addButton.setOnAction(event -> resultLabel.setText(addStudent()));
-
 
         //Remove student
         removeButton.setOnAction(event -> resultLabel.setText(removeStudent()));
 
-
-
         //Update student
+        updateButton.setOnAction(event -> resultLabel.setText(updateStudent()));
 
     }
 
@@ -98,7 +95,31 @@ public class StudentManagerGUI extends Application {
     public String removeStudent(){
         RemoveStudentForm removeStudentForm = new RemoveStudentForm();
         StudentController sc = springContext.getBean(StudentController.class);
-        sc.deleteStudent(removeStudentForm.display());
-        return "Removed Student";
+        try{
+            sc.deleteStudent(removeStudentForm.display());
+            return "Removed Student.";
+        } catch (Exception e){
+            return "There was an error."; //The student already doesn't exist
+        }
+
+    }
+
+
+    //updateStudent
+    //Works but need to add form validation in the form
+    //Changed student gets pushed to the back of the list but retains original id
+    public String updateStudent() {
+        UpdateStudentForm updateStudentForm = new UpdateStudentForm();
+        Map<Long, List<String>> map = updateStudentForm.display();
+        StudentController sc = springContext.getBean(StudentController.class);
+        try {
+            sc.updateStudent(map.keySet().iterator().next(),
+                    map.values().iterator().next().get(0),
+                    map.values().iterator().next().get(1));
+            return "Student Updated.";
+        } catch (Exception e){
+            return "Something went wrong..";
+        }
+
     }
 }
